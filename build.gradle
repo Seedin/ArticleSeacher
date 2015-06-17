@@ -1,0 +1,48 @@
+apply plugin: 'eclipse'
+apply plugin: 'java'
+apply plugin: 'war'
+apply plugin: 'jetty'
+
+version = '1.0'
+
+repositories {
+    maven{ url "http://central.maven.org/maven2"}
+}
+
+dependencies {
+    testCompile (
+            'junit:junit:4.11',
+            'org.springframework:spring-test:4.1.6.RELEASE'
+    )
+    providedCompile (
+            'javax.servlet:servlet-api:2.5'
+    )
+    compile (
+            'org.springframework:spring-context:4.1.6.RELEASE',
+            'org.springframework:spring-orm:4.1.6.RELEASE',
+            'org.springframework:spring-webmvc:4.1.6.RELEASE',
+            'org.aspectj:aspectjweaver:1.8.5',
+            'org.apache.lucene:lucene-core:5.1.0',
+            'org.apache.lucene:lucene-queryparser:5.1.0',
+            'com.chenlb.mmseg4j:mmseg4j-core:1.10.0',
+            'commons-io:commons-io:2.4',
+            'org.apache.commons:commons-lang3:3.4',
+            'com.google.code.gson:gson:2.3.1',
+            'javax.servlet:jstl:1.2',
+            'org.hibernate:hibernate-core:4.3.9.Final',
+            'org.hibernate:hibernate-c3p0:4.3.9.Final',
+//            'org.hibernate:hibernate-ehcache:4.3.9.Final',
+            'com.mchange:c3p0:0.9.5',
+            'redis.clients:jedis:2.7.2',
+            'log4j:log4j:1.2.17'
+    )
+    compile fileTree(dir: 'libs', include: '*.jar')
+}
+
+jettyRun{
+//    webAppSourceDirectory file("$projectDir/src/main/webapp")
+    httpPort 9001
+//    contextPath project.name
+//    scanIntervalSeconds 0
+//    reload "automatic"
+}

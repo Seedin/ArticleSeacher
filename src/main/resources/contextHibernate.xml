@@ -1,0 +1,104 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:context="http://www.springframework.org/schema/context"
+       xmlns:tx="http://www.springframework.org/schema/tx"
+       xmlns:aop="http://www.springframework.org/schema/aop"
+       xsi:schemaLocation="http://www.springframework.org/schema/aop
+       http://www.springframework.org/schema/aop/spring-aop.xsd
+       http://www.springframework.org/schema/beans
+       http://www.springframework.org/schema/beans/spring-beans.xsd
+       http://www.springframework.org/schema/tx
+       http://www.springframework.org/schema/tx/spring-tx.xsd
+       http://www.springframework.org/schema/context
+       http://www.springframework.org/schema/context/spring-context.xsd">
+       <!-- 配置自动扫描的包 -->
+       <context:component-scan base-package="com.lotour.article.dao"/>
+       <!-- 加载属性-->
+       <context:property-placeholder location="classpath:config.properties"/>
+       <!-- c3p0数据源-->
+       <bean id="dataSourceCms" class="com.mchange.v2.c3p0.ComboPooledDataSource">
+              <property name="user" value="${jdbc.cms.user}"/>
+              <property name="password" value="${jdbc.cms.password}"/>
+              <property name="driverClass" value="${jdbc.driverClass}"/>
+              <property name="jdbcUrl" value="${jdbc.cms.jdbcUrl}"/>
+              <property name="initialPoolSize" value="${jdbc.initialPoolSize}"/>
+              <property name="maxPoolSize" value="${jdbc.maxPoolSize}"/>
+              <property name="minPoolSize" value="${jdbc.minPoolSize}"/>
+              <property name="maxIdleTime" value="${jdbc.maxIdleTime}"/>
+       </bean>
+       <bean id="dataSourceVms" class="com.mchange.v2.c3p0.ComboPooledDataSource">
+              <property name="user" value="${jdbc.vms.user}"/>
+              <property name="password" value="${jdbc.vms.password}"/>
+              <property name="driverClass" value="${jdbc.driverClass}"/>
+              <property name="jdbcUrl" value="${jdbc.vms.jdbcUrl}"/>
+              <property name="initialPoolSize" value="${jdbc.initialPoolSize}"/>
+              <property name="maxPoolSize" value="${jdbc.maxPoolSize}"/>
+              <property name="minPoolSize" value="${jdbc.minPoolSize}"/>
+              <property name="maxIdleTime" value="${jdbc.maxIdleTime}"/>
+       </bean>
+       <!-- Hibernate SessionFactory-->
+       <bean id="sessionFactoryCms" class="org.springframework.orm.hibernate4.LocalSessionFactoryBean">
+              <property name="dataSource" ref="dataSourceCms"/>
+              <property name="configLocation" value="classpath:hibernate.cfg.xml"/>
+              <property name="packagesToScan" value="com.lotour.article.entity.cms"/>
+       </bean>
+       <bean id="sessionFactoryVms" class="org.springframework.orm.hibernate4.LocalSessionFactoryBean">
+              <property name="dataSource" ref="dataSourceVms"/>
+              <property name="configLocation" value="classpath:hibernate.cfg.xml"/>
+              <property name="packagesToScan" value="com.lotour.article.entity.vms"/>
+       </bean>
+       <!-- 配置事务管理器 -->
+       <bean id="transactionManagerCms"
+             class="org.springframework.orm.hibernate4.HibernateTransactionManager">
+              <property name="sessionFactory" ref="sessionFactoryCms" />
+       </bean>
+       <bean id="transactionManagerVms"
+             class="org.springframework.orm.hibernate4.HibernateTransactionManager">
+              <property name="sessionFactory" ref="sessionFactoryVms" />
+       </bean>
+       <!-- 配置事务通知属性 -->
+       <tx:advice id="txAdviceCms" transaction-manager="transactionManagerCms">
+              <!-- 定义事务传播属性 -->
+              <tx:attributes>
+                     <tx:method name="insert*" propagation="REQUIRED" />
+                     <tx:method name="update*" propagation="REQUIRED" />
+                     <tx:method name="edit*" propagation="REQUIRED" />
+                     <tx:method name="save*" propagation="REQUIRED" />
+                     <tx:method name="add*" propagation="REQUIRED" />
+                     <tx:method name="new*" propagation="REQUIRED" />
+                     <tx:method name="set*" propagation="REQUIRED" />
+                     <tx:method name="remove*" propagation="REQUIRED" />
+                     <tx:method name="delete*" propagation="REQUIRED" />
+                     <tx:method name="change*" propagation="REQUIRED" />
+                     <tx:method name="get*" propagation="REQUIRED" read-only="true" />
+                     <tx:method name="find*" propagation="REQUIRED" read-only="true" />
+                     <tx:method name="load*" propagation="REQUIRED" read-only="true" />
+                     <tx:method name="*" propagation="REQUIRED" read-only="true" />
+              </tx:attributes>
+       </tx:advice>
+       <tx:advice id="txAdviceVms" transaction-manager="transactionManagerVms">
+              <!-- 定义事务传播属性 -->
+              <tx:attributes>
+                     <tx:method name="insert*" propagation="REQUIRED" />
+                     <tx:method name="update*" propagation="REQUIRED" />
+                     <tx:method name="edit*" propagation="REQUIRED" />
+                     <tx:method name="save*" propagation="REQUIRED" />
+                     <tx:method name="add*" propagation="REQUIRED" />
+                     <tx:method name="new*" propagation="REQUIRED" />
+                     <tx:method name="set*" propagation="REQUIRED" />
+                     <tx:method name="remove*" propagation="REQUIRED" />
+                     <tx:method name="delete*" propagation="REQUIRED" />
+                     <tx:method name="change*" propagation="REQUIRED" />
+                     <tx:method name="get*" propagation="REQUIRED" read-only="true" />
+                     <tx:method name="find*" propagation="REQUIRED" read-only="true" />
+                     <tx:method name="load*" propagation="REQUIRED" read-only="true" />
+                     <tx:method name="*" propagation="REQUIRED" read-only="true" />
+              </tx:attributes>
+       </tx:advice>
+       <!-- 配置事务切入点-->
+       <aop:config>
+              <aop:advisor pointcut="execution(* com.lotour.article.service.impl.CmsService.*(..))" advice-ref="txAdviceCms" />
+              <aop:advisor pointcut="execution(* com.lotour.article.service.impl.VmsService.*(..))" advice-ref="txAdviceVms" />
+       </aop:config>
+</beans>
